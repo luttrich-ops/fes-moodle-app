@@ -1,0 +1,331 @@
+/*
+ FES Moodle App – Remote Theme
+ Version: 0.3
+ Ziel: FES-Grundgestaltung + Kachelraster für Kursabschnitte
+ Stand: 25.09.2026
+
+ Neu in v0.3:
+ - Kursabschnitte werden in der "Alle Abschnitte"-Ansicht als Kacheln dargestellt
+ - Smartphone: 2 Spalten
+ - Tablet: 3 Spalten
+ - Geöffnete Abschnitte spannen über die volle Breite
+ - Moodle-Akkordeon-Funktion bleibt erhalten
+*/
+
+/* =========================================================
+   FES-BRANDING – ALLE DARSTELLUNGSMODI
+   ========================================================= */
+
+:root {
+    --primary: #f2a267;
+    --ion-color-primary-rgb: 242, 162, 103;
+    --primary-contrast: #1f2933;
+    --ion-color-primary-contrast-rgb: 31, 41, 51;
+    --primary-shade: #d58f5b;
+    --primary-tint: #f3ab76;
+
+    --core-link-color: #a65419;
+
+    --core-header-toolbar-background: #f2a267;
+    --core-header-toolbar-color: #1f2933;
+    --core-header-toolbar-border-width: 0px;
+    --core-header-toolbar-border-color: transparent;
+}
+
+ion-header ion-toolbar.in-toolbar h1,
+ion-header ion-toolbar.in-toolbar h2 {
+    font-weight: 650;
+}
+
+ion-tab-bar.mainmenu-tabs {
+    --core-bottom-tabs-background-selected: transparent;
+    --core-bottom-tabs-color-selected: #c46321;
+    --core-bottom-tabs-badge-text-color: #1f2933;
+    --core-bottom-tabs-badge-color: #f2a267;
+}
+
+core-tabs,
+core-tabs-outlet {
+    --core-tab-color-active: var(--text-color);
+    --core-tab-border-color-active: #f2a267;
+    --core-tab-font-weight-active: 700;
+}
+
+core-progress-bar {
+    --core-progressbar-height: 4px;
+    --core-progressbar-color: #f2a267;
+}
+
+page-core-mainmenu-more {
+    --core-more-icon: #c46321;
+}
+
+
+/* =========================================================
+   DARK MODE
+   ========================================================= */
+
+:root.dark {
+    --core-link-color: #f2a267;
+
+    --core-header-toolbar-background: #f2a267;
+    --core-header-toolbar-color: #1f2933;
+    --core-header-toolbar-border-width: 0px;
+    --core-header-toolbar-border-color: transparent;
+}
+
+:root.dark ion-tab-bar.mainmenu-tabs {
+    --core-bottom-tabs-background-selected: transparent;
+    --core-bottom-tabs-color-selected: #f2a267;
+    --core-bottom-tabs-badge-text-color: #1f2933;
+    --core-bottom-tabs-badge-color: #f2a267;
+}
+
+:root.dark core-tabs,
+:root.dark core-tabs-outlet {
+    --core-tab-color-active: var(--text-color);
+    --core-tab-border-color-active: #f2a267;
+    --core-tab-font-weight-active: 700;
+}
+
+:root.dark core-progress-bar {
+    --core-progressbar-color: #f2a267;
+}
+
+:root.dark page-core-mainmenu-more {
+    --core-more-icon: #f2a267;
+}
+
+
+/* =========================================================
+   KONTRASTKORREKTUREN IM DARK MODE
+   ========================================================= */
+
+:root.dark core-course-format .sectionname,
+:root.dark core-course-format .item-heading,
+:root.dark core-course-format ion-accordion h2,
+:root.dark core-course-format ion-accordion h3,
+:root.dark core-course-format ion-accordion .ion-text-wrap {
+    color: var(--text-color) !important;
+}
+
+:root.dark core-block h2,
+:root.dark core-block h3,
+:root.dark core-block .item-heading,
+:root.dark .block_myoverview h2,
+:root.dark .block_myoverview h3 {
+    color: var(--text-color) !important;
+}
+
+
+/* =========================================================
+   KURSABSCHNITTE ALS KACHELN
+   Betrifft nur die Ansicht mit mehreren aufklappbaren Abschnitten.
+   Einzelabschnittsansichten bleiben unverändert.
+   ========================================================= */
+
+/* Das Moodle-Akkordeon wird zum Kachelraster. */
+core-course-format
+ion-accordion-group:has(> core-course-section.collapsible) {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    padding: 12px;
+    align-items: start;
+}
+
+/* Standardabstände der Abschnittskarten im Raster entfernen. */
+core-course-format
+ion-accordion-group:has(> core-course-section.collapsible)
+> core-course-section.collapsible {
+    display: block;
+    min-width: 0;
+}
+
+/* Geöffneter Abschnitt nutzt die gesamte Breite. */
+core-course-format
+ion-accordion-group:has(> core-course-section.collapsible)
+> core-course-section.collapsible:has(> ion-accordion.accordion-expanded),
+core-course-format
+ion-accordion-group:has(> core-course-section.collapsible)
+> core-course-section.collapsible:has(> ion-accordion.accordion-expanding) {
+    grid-column: 1 / -1;
+}
+
+/* Äußere Karte: kompakt und klar. */
+core-course-format
+ion-accordion-group:has(> core-course-section.collapsible)
+> core-course-section.collapsible
+> ion-accordion.core-course-module-list-wrapper {
+    margin: 0 !important;
+    width: 100% !important;
+    border-radius: 14px !important;
+    overflow: hidden;
+}
+
+/* Geschlossene Kachel: definierte Mindesthöhe. */
+core-course-format
+ion-accordion-group:has(> core-course-section.collapsible)
+> core-course-section.collapsible
+> ion-accordion:not(.accordion-expanded):not(.accordion-expanding) {
+    min-height: 112px;
+}
+
+/* Abschnittskopf als echte Touch-Kachel. */
+core-course-format
+ion-accordion-group:has(> core-course-section.collapsible)
+> core-course-section.collapsible
+> ion-accordion
+> ion-item.course-section[slot="header"] {
+    --min-height: 112px;
+    --padding-start: 14px;
+    --inner-padding-end: 12px;
+    --background: var(--ion-card-background, var(--ion-item-background));
+    align-items: stretch;
+}
+
+/* Titel zentriert und etwas kräftiger. */
+core-course-format
+ion-accordion-group:has(> core-course-section.collapsible)
+> core-course-section.collapsible
+> ion-accordion
+> ion-item.course-section[slot="header"]
+ion-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    text-align: center;
+}
+
+core-course-format
+ion-accordion-group:has(> core-course-section.collapsible)
+> core-course-section.collapsible
+> ion-accordion
+> ion-item.course-section[slot="header"]
+h2.big {
+    width: 100%;
+    margin: 0;
+    font-size: 1.05rem;
+    line-height: 1.25;
+    font-weight: 700;
+    text-align: center;
+}
+
+/* Toggle-Symbol dezent unten links; Moodle-Funktion bleibt unverändert. */
+core-course-format
+ion-accordion-group:has(> core-course-section.collapsible)
+> core-course-section.collapsible
+> ion-accordion
+> ion-item.course-section[slot="header"]
+.ion-accordion-toggle-icon {
+    opacity: 0.70;
+}
+
+/* FES-Akzent für geschlossene Kacheln. */
+core-course-format
+ion-accordion-group:has(> core-course-section.collapsible)
+> core-course-section.collapsible
+> ion-accordion:not(.accordion-expanded):not(.accordion-expanding) {
+    border-top: 4px solid #f2a267 !important;
+}
+
+/* Geöffnete Karte optisch als Inhaltsbereich behandeln. */
+core-course-format
+ion-accordion-group:has(> core-course-section.collapsible)
+> core-course-section.collapsible
+> ion-accordion.accordion-expanded,
+core-course-format
+ion-accordion-group:has(> core-course-section.collapsible)
+> core-course-section.collapsible
+> ion-accordion.accordion-expanding {
+    border-top: 4px solid #f2a267 !important;
+}
+
+/* Im geöffneten Zustand Kopf kompakter, damit der Inhalt mehr Raum bekommt. */
+core-course-format
+ion-accordion-group:has(> core-course-section.collapsible)
+> core-course-section.collapsible
+> ion-accordion.accordion-expanded
+> ion-item.course-section[slot="header"],
+core-course-format
+ion-accordion-group:has(> core-course-section.collapsible)
+> core-course-section.collapsible
+> ion-accordion.accordion-expanding
+> ion-item.course-section[slot="header"] {
+    --min-height: 64px;
+}
+
+core-course-format
+ion-accordion-group:has(> core-course-section.collapsible)
+> core-course-section.collapsible
+> ion-accordion.accordion-expanded
+> ion-item.course-section[slot="header"]
+ion-label,
+core-course-format
+ion-accordion-group:has(> core-course-section.collapsible)
+> core-course-section.collapsible
+> ion-accordion.accordion-expanding
+> ion-item.course-section[slot="header"]
+ion-label {
+    justify-content: flex-start;
+    text-align: left;
+}
+
+core-course-format
+ion-accordion-group:has(> core-course-section.collapsible)
+> core-course-section.collapsible
+> ion-accordion.accordion-expanded
+> ion-item.course-section[slot="header"]
+h2.big,
+core-course-format
+ion-accordion-group:has(> core-course-section.collapsible)
+> core-course-section.collapsible
+> ion-accordion.accordion-expanding
+> ion-item.course-section[slot="header"]
+h2.big {
+    text-align: left;
+    font-size: 1.15rem;
+}
+
+
+/* =========================================================
+   TABLET / BREITERE DISPLAYS
+   ========================================================= */
+
+@media (min-width: 600px) {
+    core-course-format
+    ion-accordion-group:has(> core-course-section.collapsible) {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+        padding: 16px;
+    }
+
+    core-course-format
+    ion-accordion-group:has(> core-course-section.collapsible)
+    > core-course-section.collapsible
+    > ion-accordion:not(.accordion-expanded):not(.accordion-expanding) {
+        min-height: 128px;
+    }
+
+    core-course-format
+    ion-accordion-group:has(> core-course-section.collapsible)
+    > core-course-section.collapsible
+    > ion-accordion
+    > ion-item.course-section[slot="header"] {
+        --min-height: 128px;
+    }
+
+    core-course-format
+    ion-accordion-group:has(> core-course-section.collapsible)
+    > core-course-section.collapsible
+    > ion-accordion.accordion-expanded
+    > ion-item.course-section[slot="header"],
+    core-course-format
+    ion-accordion-group:has(> core-course-section.collapsible)
+    > core-course-section.collapsible
+    > ion-accordion.accordion-expanding
+    > ion-item.course-section[slot="header"] {
+        --min-height: 68px;
+    }
+}
