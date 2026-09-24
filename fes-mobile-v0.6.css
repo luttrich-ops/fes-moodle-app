@@ -1,0 +1,473 @@
+/*
+ FES Moodle App – Remote Theme
+ Version: 0.6
+ Ziel: v0.5 optisch beibehalten, aber kursübergreifend robust machen
+ Stand: 25.09.2026
+
+ Debug-Fokus v0.6:
+ - lange Abschnittstitel brechen sauber um, keine senkrechten Wortketten mehr
+ - versteckte Abschnitte behalten ein stabiles Kartenlayout
+ - unzuverlässige pseudo-Symbole aus v0.5 entfernt
+ - geöffnete Abschnitte bleiben volle Breite
+ - mehrere Aktivitäten werden im geöffneten Abschnitt als eigene, klare Karten dargestellt
+*/
+
+/* =========================================================
+   FES-BRANDING – BASIS
+   ========================================================= */
+
+:root {
+    --primary: #f2a267;
+    --ion-color-primary-rgb: 242, 162, 103;
+    --primary-contrast: #1f2933;
+    --ion-color-primary-contrast-rgb: 31, 41, 51;
+    --primary-shade: #d58f5b;
+    --primary-tint: #f3ab76;
+
+    --core-link-color: #a65419;
+
+    --core-header-toolbar-background: #f2a267;
+    --core-header-toolbar-color: #1f2933;
+    --core-header-toolbar-border-width: 0px;
+    --core-header-toolbar-border-color: transparent;
+
+    --fes-accent: #f2a267;
+    --fes-accent-2: #3e7085;
+    --fes-card-radius: 18px;
+    --fes-card-shadow: 0 8px 22px rgba(0, 0, 0, .14);
+}
+
+ion-header ion-toolbar.in-toolbar h1,
+ion-header ion-toolbar.in-toolbar h2 {
+    font-weight: 700;
+    letter-spacing: .01em;
+}
+
+ion-tab-bar.mainmenu-tabs {
+    --core-bottom-tabs-background-selected: transparent;
+    --core-bottom-tabs-color-selected: #c46321;
+    --core-bottom-tabs-badge-text-color: #1f2933;
+    --core-bottom-tabs-badge-color: #f2a267;
+}
+
+core-tabs,
+core-tabs-outlet {
+    --core-tab-color-active: var(--text-color);
+    --core-tab-border-color-active: #f2a267;
+    --core-tab-font-weight-active: 700;
+}
+
+core-progress-bar {
+    --core-progressbar-height: 4px;
+    --core-progressbar-color: #f2a267;
+}
+
+page-core-mainmenu-more {
+    --core-more-icon: #c46321;
+}
+
+/* =========================================================
+   DARK MODE
+   ========================================================= */
+
+:root.dark {
+    --core-link-color: #f2a267;
+    --core-header-toolbar-background: #f2a267;
+    --core-header-toolbar-color: #1f2933;
+    --core-header-toolbar-border-width: 0px;
+    --core-header-toolbar-border-color: transparent;
+}
+
+:root.dark ion-tab-bar.mainmenu-tabs {
+    --core-bottom-tabs-background-selected: transparent;
+    --core-bottom-tabs-color-selected: #f2a267;
+    --core-bottom-tabs-badge-text-color: #1f2933;
+    --core-bottom-tabs-badge-color: #f2a267;
+}
+
+:root.dark core-tabs,
+:root.dark core-tabs-outlet {
+    --core-tab-color-active: var(--text-color);
+    --core-tab-border-color-active: #f2a267;
+    --core-tab-font-weight-active: 700;
+}
+
+:root.dark core-progress-bar {
+    --core-progressbar-color: #f2a267;
+}
+
+:root.dark page-core-mainmenu-more {
+    --core-more-icon: #f2a267;
+}
+
+/* bessere Lesbarkeit */
+:root.dark core-course-format .sectionname,
+:root.dark core-course-format .item-heading,
+:root.dark core-course-format ion-accordion h2,
+:root.dark core-course-format ion-accordion h3,
+:root.dark core-course-format ion-accordion .ion-text-wrap,
+:root.dark core-block h2,
+:root.dark core-block h3,
+:root.dark core-block .item-heading,
+:root.dark .block_myoverview h2,
+:root.dark .block_myoverview h3 {
+    color: var(--text-color) !important;
+}
+
+/* =========================================================
+   KURSABSCHNITTE ALS MODERNE KACHELN
+   ========================================================= */
+
+core-course-format
+ion-accordion-group:has(> core-course-section.collapsible) {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    padding: 14px;
+    align-items: start;
+}
+
+core-course-format
+ion-accordion-group:has(> core-course-section.collapsible)
+> core-course-section.collapsible {
+    display: block;
+    min-width: 0;
+}
+
+/* Geöffneter Abschnitt: immer volle Breite. */
+core-course-format
+ion-accordion-group:has(> core-course-section.collapsible)
+> core-course-section.collapsible:has(> ion-accordion.accordion-expanded),
+core-course-format
+ion-accordion-group:has(> core-course-section.collapsible)
+> core-course-section.collapsible:has(> ion-accordion.accordion-expanding) {
+    grid-column: 1 / -1;
+}
+
+/* Kartenrahmen */
+core-course-format
+ion-accordion-group:has(> core-course-section.collapsible)
+> core-course-section.collapsible
+> ion-accordion.core-course-module-list-wrapper {
+    margin: 0 !important;
+    width: 100% !important;
+    border-radius: var(--fes-card-radius) !important;
+    overflow: hidden;
+    border: 1px solid rgba(127,127,127,.24);
+    border-top: 3px solid var(--fes-accent) !important;
+    box-shadow: var(--fes-card-shadow);
+    background: linear-gradient(180deg, rgba(255,255,255,.025), rgba(255,255,255,.005));
+}
+
+/* Geschlossene Kacheln */
+core-course-format
+ion-accordion-group:has(> core-course-section.collapsible)
+> core-course-section.collapsible
+> ion-accordion:not(.accordion-expanded):not(.accordion-expanding) {
+    min-height: 112px;
+    position: relative;
+}
+
+/* versteckte / eingeschränkte Abschnitte bekommen etwas mehr Platz */
+core-course-format
+ion-accordion-group:has(> core-course-section.collapsible)
+> core-course-section.collapsible
+> ion-accordion:not(.accordion-expanded):not(.accordion-expanding)
+> ion-item.course-section[slot="header"]:has(ion-badge) {
+    --min-height: 136px;
+}
+
+/* subtiler Lichtakzent */
+core-course-format
+ion-accordion-group:has(> core-course-section.collapsible)
+> core-course-section.collapsible
+> ion-accordion:not(.accordion-expanded):not(.accordion-expanding)::after {
+    content: "";
+    position: absolute;
+    top: -32px;
+    right: -32px;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(242,162,103,.16), rgba(242,162,103,0) 72%);
+    pointer-events: none;
+}
+
+/* Header als Touch-Fläche */
+core-course-format
+ion-accordion-group:has(> core-course-section.collapsible)
+> core-course-section.collapsible
+> ion-accordion
+> ion-item.course-section[slot="header"] {
+    --min-height: 112px;
+    --padding-start: 12px;
+    --inner-padding-end: 12px;
+    --background: transparent;
+    position: relative;
+    align-items: stretch;
+}
+
+/* WICHTIG: kein Flex-Shrinking des Titels mehr.
+   Das behebt die senkrechten Buchstabenketten bei langen/versteckten Titeln. */
+core-course-format
+ion-accordion-group:has(> core-course-section.collapsible)
+> core-course-section.collapsible
+> ion-accordion:not(.accordion-expanded):not(.accordion-expanding)
+> ion-item.course-section[slot="header"]
+ion-label {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: center;
+    justify-items: center;
+    min-width: 0 !important;
+    width: 100%;
+    margin: 0;
+    padding: 24px 12px 14px;
+    text-align: center;
+}
+
+/* Titel stabil auf max. drei Zeilen */
+core-course-format
+ion-accordion-group:has(> core-course-section.collapsible)
+> core-course-section.collapsible
+> ion-accordion:not(.accordion-expanded):not(.accordion-expanding)
+> ion-item.course-section[slot="header"]
+h2.big {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    margin: 0;
+
+    font-size: 1rem;
+    line-height: 1.24;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: .005em;
+
+    white-space: normal !important;
+    word-break: normal !important;
+    overflow-wrap: break-word !important;
+    hyphens: auto;
+}
+
+/* auch Moodle-HTML im Titel darf die Breite nicht sprengen */
+core-course-format
+ion-accordion-group:has(> core-course-section.collapsible)
+> core-course-section.collapsible
+> ion-accordion:not(.accordion-expanded):not(.accordion-expanding)
+> ion-item.course-section[slot="header"]
+h2.big core-format-text {
+    display: block;
+    min-width: 0;
+    max-width: 100%;
+}
+
+/* Versteckt-/Status-Badge unter dem Titel, nicht daneben */
+core-course-format
+ion-accordion-group:has(> core-course-section.collapsible)
+> core-course-section.collapsible
+> ion-accordion:not(.accordion-expanded):not(.accordion-expanding)
+> ion-item.course-section[slot="header"]
+ion-label > div {
+    display: flex;
+    justify-content: center;
+    min-width: 0;
+    max-width: 100%;
+    margin-top: 8px;
+}
+
+core-course-format
+ion-accordion-group:has(> core-course-section.collapsible)
+> core-course-section.collapsible
+> ion-accordion:not(.accordion-expanded):not(.accordion-expanding)
+> ion-item.course-section[slot="header"]
+ion-badge {
+    max-width: 100%;
+    font-size: .70rem;
+    line-height: 1.15;
+    padding: 5px 8px;
+    white-space: normal;
+}
+
+/* Pfeil dezent oben rechts */
+core-course-format
+ion-accordion-group:has(> core-course-section.collapsible)
+> core-course-section.collapsible
+> ion-accordion:not(.accordion-expanded):not(.accordion-expanding)
+> ion-item.course-section[slot="header"]
+.ion-accordion-toggle-icon {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    left: auto;
+    margin: 0 !important;
+    padding: 6px;
+    font-size: 18px;
+    opacity: .76;
+    z-index: 3;
+    background: rgba(127,127,127,.10);
+    border-radius: 999px;
+}
+
+/* =========================================================
+   GEÖFFNETER ABSCHNITT
+   ========================================================= */
+
+core-course-format
+ion-accordion-group:has(> core-course-section.collapsible)
+> core-course-section.collapsible
+> ion-accordion.accordion-expanded
+> ion-item.course-section[slot="header"],
+core-course-format
+ion-accordion-group:has(> core-course-section.collapsible)
+> core-course-section.collapsible
+> ion-accordion.accordion-expanding
+> ion-item.course-section[slot="header"] {
+    --min-height: 62px;
+}
+
+core-course-format
+ion-accordion-group:has(> core-course-section.collapsible)
+> core-course-section.collapsible
+> ion-accordion.accordion-expanded
+> ion-item.course-section[slot="header"]
+ion-label,
+core-course-format
+ion-accordion-group:has(> core-course-section.collapsible)
+> core-course-section.collapsible
+> ion-accordion.accordion-expanding
+> ion-item.course-section[slot="header"]
+ion-label {
+    display: block !important;
+    min-width: 0 !important;
+    margin: 0;
+    padding: 10px 8px 10px 0;
+    text-align: left;
+}
+
+core-course-format
+ion-accordion-group:has(> core-course-section.collapsible)
+> core-course-section.collapsible
+> ion-accordion.accordion-expanded
+> ion-item.course-section[slot="header"]
+h2.big,
+core-course-format
+ion-accordion-group:has(> core-course-section.collapsible)
+> core-course-section.collapsible
+> ion-accordion.accordion-expanding
+> ion-item.course-section[slot="header"]
+h2.big {
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    font-size: 1.12rem;
+    line-height: 1.25;
+    font-weight: 700;
+    text-align: left;
+
+    white-space: normal !important;
+    word-break: normal !important;
+    overflow-wrap: break-word !important;
+}
+
+/* geöffneter Zustand: nativer Moodle-Pfeil */
+core-course-format
+ion-accordion-group:has(> core-course-section.collapsible)
+> core-course-section.collapsible
+> ion-accordion.accordion-expanded
+> ion-item.course-section[slot="header"]
+.ion-accordion-toggle-icon,
+core-course-format
+ion-accordion-group:has(> core-course-section.collapsible)
+> core-course-section.collapsible
+> ion-accordion.accordion-expanding
+> ion-item.course-section[slot="header"]
+.ion-accordion-toggle-icon {
+    position: static;
+    margin-right: 8px !important;
+    padding: var(--mdl-spacing-1);
+    font-size: inherit;
+    opacity: 1;
+    background: transparent;
+}
+
+/* =========================================================
+   AKTIVITÄTEN IM GEÖFFNETEN ABSCHNITT
+   Jede Aktivität wird zu einer klar erkennbaren Unterkarte.
+   Moodle-eigene Aktivitätssymbole bleiben erhalten.
+   ========================================================= */
+
+core-course-format
+ion-accordion.accordion-expanded
+core-course-module {
+    --card-background: var(--ion-card-background);
+    --card-radius: 14px;
+    --card-border-width: 1px;
+    --activity-border: 0px;
+    --horizontal-spacing: 12px;
+    --vertical-spacing: 6px;
+}
+
+core-course-format
+ion-accordion.accordion-expanded
+core-course-module
+> ion-card.activity-card {
+    margin: 9px 10px !important;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    border: 1px solid rgba(127,127,127,.22);
+    border-radius: 14px !important;
+    box-shadow: 0 3px 10px rgba(0,0,0,.07);
+}
+
+/* Titel der Aktivität etwas klarer */
+core-course-format
+ion-accordion.accordion-expanded
+core-course-module
+.activity-title
+.item-heading {
+    font-weight: 600;
+    line-height: 1.25;
+}
+
+/* Beschreibungen optisch sekundär */
+core-course-format
+ion-accordion.accordion-expanded
+core-course-module
+.activity-description-availabilityinfo {
+    opacity: .86;
+    font-size: .94em;
+}
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (min-width: 600px) {
+    core-course-format
+    ion-accordion-group:has(> core-course-section.collapsible) {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+        padding: 16px;
+    }
+
+    core-course-format
+    ion-accordion-group:has(> core-course-section.collapsible)
+    > core-course-section.collapsible
+    > ion-accordion:not(.accordion-expanded):not(.accordion-expanding) {
+        min-height: 118px;
+    }
+
+    core-course-format
+    ion-accordion-group:has(> core-course-section.collapsible)
+    > core-course-section.collapsible
+    > ion-accordion
+    > ion-item.course-section[slot="header"] {
+        --min-height: 118px;
+    }
+}
